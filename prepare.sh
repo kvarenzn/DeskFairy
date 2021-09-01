@@ -15,12 +15,12 @@ prepare_cubism_sdk() {
 	cd ${CUBISM_SDK_DIR}
 
 	# PWD=./downloads/${CUBISM_SDK_DIR}
+	mkdir ../../3rdparty/cubismcore/
 	mv ./Core/include/ ../../3rdparty/cubismcore/include
 	mv ./Core/dll/linux/x86_64/ ../../3rdparty/cubismcore/lib
 	cd ../../
 
 	# PWD=./
-	rm ./DeskFairy/src/Framework/CMakeLists.txt
 	rm -rf ./downloads/
 }
 
