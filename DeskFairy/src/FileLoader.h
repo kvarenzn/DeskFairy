@@ -4,7 +4,7 @@
 
 using Bytes = unsigned char;
 
-//ÎÄ¼ş¼ÓÔØÆ÷
+//æ–‡ä»¶åŠ è½½å™¨
 class FileLoader
 {
 public:

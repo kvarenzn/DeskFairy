@@ -7,6 +7,8 @@
 #include <QPainter>
 #include "TransparentWindow.h"
 
+#include <QDebug>
+
 QImage itemImage[ITEMTYPE_COUNT];
 
 ItemManager::ItemManager(
@@ -37,12 +39,14 @@ ItemManager::ItemManager(
 	connect(_mouseTracker, &MouseTracker::mouseMoveSignal, this, &ItemManager::_OnMouseMove);
 
 	_world = new b2World(b2Vec2(0.0, Settings::itemGravity));
-	_world->SetWarmStarting(true);
+	// _world = new b2World(b2Vec2(0, 0));
+	// _world->SetWarmStarting(true);
+
 
 	b2BodyDef nullDef;
 	_nullBody = _world->CreateBody(&nullDef);
 
-	_SetupBorder();
+	// _SetupBorder();
 
 	UpdateSettings();
 }
@@ -58,8 +62,7 @@ ItemManager::~ItemManager()
 
 void ItemManager::AddItem(int type)
 {
-	_items.push_back(new Item);
-	Item* item = _items.back();
+	Item* item = new Item;
 	item->type = type;
 	item->size = *_modelItemSize;
 	item->time = _time;
@@ -81,6 +84,7 @@ void ItemManager::AddItem(int type)
 	itemFixtureDef.friction = Def::itemFriction;
 	itemFixtureDef.restitution = Def::itemRestitution;
 	item->body->CreateFixture(&itemFixtureDef);
+	_items.push_back(item);
 }
 
 void ItemManager::StartDraggingItemFromLive2D()
@@ -125,7 +129,7 @@ ItemManager::Item* ItemManager::_FindItem(b2Body* body) const
 
 void ItemManager::_Update()
 {
-	_world->Step(_frameTime * 0.001, 3, 1);
+	_world->Step(_frameTime * 0.001, 6, 2);
 	this->update();
 	_time += _frameTime;
 }
@@ -133,9 +137,9 @@ void ItemManager::_Update()
 ItemManager::Item* ItemManager::_GetMouseItem() const
 {
 	b2AABB cursor;
-	cursor.lowerBound = _ScreenToWorld(b2Vec2(_mouseX, _mouseY) + b2Vec2(-0.5, -0.5));
-	cursor.upperBound = _ScreenToWorld(b2Vec2(_mouseX, _mouseY) + b2Vec2(0.5, 0.5));
-	ItemManager::QueryCallback q(_ScreenToWorld(b2Vec2(_mouseX, _mouseY)));
+	cursor.lowerBound = _ScreenToWorld(b2Vec2(lastPosX, lastPosY) + b2Vec2(-0.5, -0.5));
+	cursor.upperBound = _ScreenToWorld(b2Vec2(lastPosX, lastPosY) + b2Vec2(0.5, 0.5));
+	ItemManager::QueryCallback q(_ScreenToWorld(b2Vec2(lastPosX, lastPosY)));
 	_world->QueryAABB(&q, cursor);
 	if (q.fixture)
 	{
@@ -189,7 +193,7 @@ void ItemManager::paintEvent(QPaintEvent* e)
 		QRect itemRect(-item->size / 2, -item->size / 2, item->size, item->size);
 		QImage& image = itemImage[item->type];
 		painter.setOpacity((item == _mouseOnItem) ? 1.0 : 0.7);
-		painter.resetMatrix();
+		painter.resetTransform();
 		painter.translate(pos.x, pos.y);
 		painter.rotate(item->body->GetAngle() / Def::pi * 180.0);
 		
@@ -218,21 +222,29 @@ void ItemManager::UpdateSettings()
 	_frameTime = 1000.0 / Settings::itemFps;
 	_timer->start(_frameTime);
 	_world->SetGravity(b2Vec2(0.0, Settings::itemGravity));
-	for (auto item : _items)
-	{
-		item->body->SetAwake(true);
-	}
+	// for (auto item : _items)
+	// {
+	// 	item->body->SetAwake(true);
+	// }
 }
 
 void ItemManager::_OnMouseMove(int x, int y)
 {
-	_mouseX = x;
-	_mouseY = y;
+	int dx = x - lastPosX;
+	int dy = y - lastPosY;
+	// if (dx != 0 || dy != 0) {
+		velocityX = dx;
+		velocityY = dy;
+	// }
+	lastPosX = x;
+	lastPosY = y;
 	_mouseOnItem = _GetMouseItem();
 	TransparentWindow::SetTransparentForMouse(this, !_mouseOnItem);
-	if (_mouseJoint)
+	if (_draggingItem)
 	{
-		_mouseJoint->SetTarget(_ScreenToWorld(b2Vec2(x, y)));
+		auto body = _draggingItem->body;
+		auto angle = body->GetAngle();
+		_draggingItem->body->SetTransform(_ScreenToWorld(b2Vec2(x, y)), angle);
 	}
 }
 
@@ -241,23 +253,23 @@ void ItemManager::_OnDragStart(Item* item)
 	if (!item)
 		return;
 	_draggingItem = item;
-
-	if (_mouseJoint)
-	{
-		_world->DestroyJoint(_mouseJoint);
-	}
-	b2MouseJointDef mouseJointDef;
-	mouseJointDef.bodyA = _nullBody;
-	mouseJointDef.bodyB = item->body;
-	mouseJointDef.target = _ScreenToWorld(b2Vec2(_mouseX, _mouseY));
-	mouseJointDef.collideConnected = false;
-	mouseJointDef.maxForce = 10000000.0f * item->body->GetMass();
-	_mouseJoint = (b2MouseJoint*)_world->CreateJoint(&mouseJointDef);
-	item->body->SetAwake(true);
+	_draggingItem->body->SetType(b2_kinematicBody);
+	_draggingItem->body->SetAwake(true);
+	auto pos = QCursor::pos();
+	lastPosX = pos.x();
+	lastPosY = pos.y();
+	velocityX = 0;
+	velocityY = 0;
 }
 
 void ItemManager::_OnDragEnd()
 {
+	if (_draggingItem) {
+		_draggingItem->body->SetType(b2_dynamicBody);
+		auto linear_velocity = _ScreenToWorld(b2Vec2(velocityX * Def::mouseTrackTimePerFrame, velocityY * Def::mouseTrackTimePerFrame));
+		_draggingItem->body->SetLinearVelocity(linear_velocity);
+	}
+
 	Item* toRemoveItem = nullptr;
 	if (_draggingItem && _time - _draggingItem->time > 1000.0)
 	{
@@ -271,11 +283,6 @@ void ItemManager::_OnDragEnd()
 	}
 
 	_draggingItem = nullptr;
-	if (_mouseJoint)
-	{
-		_world->DestroyJoint(_mouseJoint);
-	}
-	_mouseJoint = nullptr;
 
 	if(toRemoveItem)
 		_RemoveItem(toRemoveItem);

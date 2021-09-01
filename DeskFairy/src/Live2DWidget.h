@@ -25,93 +25,93 @@ class ThLauncher;
 
 
 
-//ÕÆ¹ÜLive2DÄ£ĞÍ¡¢´°¿Ú¡¢ÆäËûÄ£¿éµÄ¸üĞÂ
+//æŒç®¡Live2Dæ¨¡å‹ã€çª—å£ã€å…¶ä»–æ¨¡å—çš„æ›´æ–°
 class Live2DWidget : public QOpenGLWidget
 {
     Q_OBJECT
 
 public:
 
-    //Í¨¹ıÄ£ĞÍÃû³Æ³õÊ¼»¯
+    //é€šè¿‡æ¨¡å‹åç§°åˆå§‹åŒ–
     Live2DWidget(std::string modelName);
 
-    //Ïú»Ù
+    //é”€æ¯
     ~Live2DWidget();
 
 
 
-    //»æÖÆÄ£ĞÍ
+    //ç»˜åˆ¶æ¨¡å‹
     void paintGL() override;
 
 
 
-    //Êó±êÒÆ¶¯ÊÂ¼ş£¬ÓÉÊó±ê×·×ÙÆ÷´¥·¢£¬ÓëqtµÄmouseMoveEvent²»Í¬
+    //é¼ æ ‡ç§»åŠ¨äº‹ä»¶ï¼Œç”±é¼ æ ‡è¿½è¸ªå™¨è§¦å‘ï¼Œä¸qtçš„mouseMoveEventä¸åŒ
     void MouseMoveEvent(int x, int y);
 
-    //Êó±ê°´ÏÂÊÂ¼ş
+    //é¼ æ ‡æŒ‰ä¸‹äº‹ä»¶
     void mousePressEvent(QMouseEvent* e) override;
 
-    //Êó±êÊÍ·ÅÊÂ¼ş
+    //é¼ æ ‡é‡Šæ”¾äº‹ä»¶
     void mouseReleaseEvent(QMouseEvent* e) override;
 
-    //Êó±êË«»÷ÊÂ¼ş
+    //é¼ æ ‡åŒå‡»äº‹ä»¶
     void mouseDoubleClickEvent(QMouseEvent* e) override;
 
-    //ÖØĞ´µÄ±¾µØÊÂ¼ş£¬ÓÃÓÚ×èÖ¹Êó±êµã»÷Ê¹´°¿Ú»ñµÃ½¹µã
+    //é‡å†™çš„æœ¬åœ°äº‹ä»¶ï¼Œç”¨äºé˜»æ­¢é¼ æ ‡ç‚¹å‡»ä½¿çª—å£è·å¾—ç„¦ç‚¹
     bool nativeEvent(const QByteArray& b, void* m, long* r) override;
 
-    //ÓÒ¼ü²Ëµ¥ÊÂ¼ş
+    //å³é”®èœå•äº‹ä»¶
     void contextMenuEvent(QContextMenuEvent* e) override;
 
 signals:
 
-    //½ØÍ¼ĞÅºÅ
+    //æˆªå›¾ä¿¡å·
     void TakeScreenshotSignal(bool fastMode);
 
-    //±à¼­ÒÑÓĞ½ØÍ¼ĞÅºÅ
+    //ç¼–è¾‘å·²æœ‰æˆªå›¾ä¿¡å·
     void EditScreenshotSignal();
 
-    //½áÊøÎïÆ·ÍÏÒ·ĞÅºÅ
+    //ç»“æŸç‰©å“æ‹–æ›³ä¿¡å·
     void EndDragItemSignal();
 
-    //Ìí¼ÓÎïÆ·ĞÅºÅ
+    //æ·»åŠ ç‰©å“ä¿¡å·
     void AddItemSignal(int type);
 
-    //ÍÏÒ·ÎïÆ·ĞÅºÅ
+    //æ‹–æ›³ç‰©å“ä¿¡å·
     void DragItemSignal();
 
-    //ÍË³öĞÅºÅ
+    //é€€å‡ºä¿¡å·
     void CloseSignal(int exitCode = 0);
 
 private:
 
-    //¶¨Ê±Æ÷ºÍÊ±¼ä
+    //å®šæ—¶å™¨å’Œæ—¶é—´
     QTimer* _timer = nullptr;
     int _frameTime = 0;
     int _time = 0;
 
     
 
-    //ÆÁÄ»´óĞ¡
+    //å±å¹•å¤§å°
     int _screenWidth = 0;
     int _screenHeight = 0;
 
 
 
-    //cubism³õÊ¼»¯Ïà¹Ø
+    //cubismåˆå§‹åŒ–ç›¸å…³
     Allocator* _cubismAllocator = nullptr;
     Csm::CubismFramework::Option* _cubismOption = nullptr;
 
-    //¶«·½Æô¶¯Æ÷
+    //ä¸œæ–¹å¯åŠ¨å™¨
     ThLauncher* _thLauncher = nullptr;
 
-    //ÆÁÄ»½ØÍ¼Æ÷
+    //å±å¹•æˆªå›¾å™¨
     ScreenGrabber* _screenGrabber   = nullptr;
     
-    //ÎïÆ·¹ÜÀíÆ÷
+    //ç‰©å“ç®¡ç†å™¨
     ItemManager* _itemManager = nullptr;
 
-    //Êó±êÊäÈë´¦Àí
+    //é¼ æ ‡è¾“å…¥å¤„ç†
     MouseTracker* _mouseTracker     = nullptr;
 
     double _mouseX = 0;
@@ -122,12 +122,12 @@ private:
 
 
 
-    //¸üĞÂÊı¾İ£¬»áÔÚÃ¿Ö¡µ÷ÓÃÒ»´Î
+    //æ›´æ–°æ•°æ®ï¼Œä¼šåœ¨æ¯å¸§è°ƒç”¨ä¸€æ¬¡
     void _Update();
 
 
 
-    //Ä£ĞÍ 
+    //æ¨¡å‹ 
     Model* _model = nullptr;
 
     double _modelSize = 0.0;
@@ -142,57 +142,57 @@ private:
     double _modelVelocityX = 0.0;
     double _modelVelocityY = 0.0;
 
-    //Í¨¹ıÄ£ĞÍÂ·¾¶Ãû¼ÓÔØÄ£ĞÍ
+    //é€šè¿‡æ¨¡å‹è·¯å¾„ååŠ è½½æ¨¡å‹
     void _LoadModel(std::string fileName);
     
-    //³õÊ¼»¯Ä£ĞÍµÄ´óĞ¡£¨ÓÃÓÚºÍÆÁÄ»±ßÔµµÄÅö×²¼ì²â£©
+    //åˆå§‹åŒ–æ¨¡å‹çš„å¤§å°ï¼ˆç”¨äºå’Œå±å¹•è¾¹ç¼˜çš„ç¢°æ’æ£€æµ‹ï¼‰
     void _SetupModelSize();
 
-    //ÊÍ·ÅÄ£ĞÍ
+    //é‡Šæ”¾æ¨¡å‹
     void _ReleaseModel();
 
-    //½«Ä£ĞÍÒÆ¶¯Ò»¶¨¾àÀë
+    //å°†æ¨¡å‹ç§»åŠ¨ä¸€å®šè·ç¦»
     void _MoveModelBy(double dx, double dy);
 
-    //½«Ä£ĞÍÒÆ¶¯µ½Ö¸¶¨µã
+    //å°†æ¨¡å‹ç§»åŠ¨åˆ°æŒ‡å®šç‚¹
     void _MoveModelTo(double x, double y);
 
-    //±£³ÖÄ£ĞÍÔÚÆÁÄ»ÄÚ
+    //ä¿æŒæ¨¡å‹åœ¨å±å¹•å†…
     void _KeepModelInScreen();
 
-    //¶ÔÄ£ĞÍÄ³¸öÅö×²ÇøÓòµÄ¼ì²â
+    //å¯¹æ¨¡å‹æŸä¸ªç¢°æ’åŒºåŸŸçš„æ£€æµ‹
     bool _ModelHitTest(int x, int y, std::string hitArea = "Body") const;
 
     
 
-    //ÉèÖÃ²Ëµ¥
+    //è®¾ç½®èœå•
     SettingsMenu* _settingsMenu = nullptr;
 
-    //¸üĞÂÉèÖÃĞÅÏ¢
+    //æ›´æ–°è®¾ç½®ä¿¡æ¯
     void _UpdateSettings();
 
 
 
-    //ÈÈ¼ü
+    //çƒ­é”®
     std::vector<QHotkey*> _hotkeys;
     
-    //³õÊ¼»¯ÈÈ¼ü
+    //åˆå§‹åŒ–çƒ­é”®
     void _SetupHotkeys();
 
-    //ÉèÖÃÈÈ¼ü¿ªÆô»ò¹Ø±Õ
+    //è®¾ç½®çƒ­é”®å¼€å¯æˆ–å…³é—­
     void _SetHotkeysState(bool enable);
 
 
 
-    //¼Æ»®º¯ÊıµÄ±ğÃû
+    //è®¡åˆ’å‡½æ•°çš„åˆ«å
     using PlanFunction = void (Live2DWidget::*)();
 
-    //ÑÓ³ÙÒ»¶¨Ê±¼ä½øĞĞµÄ¼Æ»®ÀàĞÍ
+    //å»¶è¿Ÿä¸€å®šæ—¶é—´è¿›è¡Œçš„è®¡åˆ’ç±»å‹
     struct Plan
     {
         PlanFunction function;
         int executeTime;
-        //±È½Ï´óĞ¡·½Ê½Ïà·´£¬ÅÅĞòÊ±°´Ö´ĞĞÊ±¼ä´ÓĞ¡µ½´óÅÅĞò
+        //æ¯”è¾ƒå¤§å°æ–¹å¼ç›¸åï¼Œæ’åºæ—¶æŒ‰æ‰§è¡Œæ—¶é—´ä»å°åˆ°å¤§æ’åº
         bool operator<(const Plan& other)const
         {
             return executeTime > other.executeTime;
@@ -201,15 +201,15 @@ private:
 
     std::priority_queue<Plan> _plans;
 
-    //Ìí¼Ó¼Æ»®
+    //æ·»åŠ è®¡åˆ’
     void _AddPlan(PlanFunction func, int delay);
 
-    //¸üĞÂ¼Æ»®ÁĞ±í
+    //æ›´æ–°è®¡åˆ’åˆ—è¡¨
     void _UpdatePlan();
 
 
 
-    //¸÷ÖÖ¶¯×÷¼°ËüÃÇµÄ×´Ì¬
+    //å„ç§åŠ¨ä½œåŠå®ƒä»¬çš„çŠ¶æ€
     bool _isDragging        = false;
     bool _isDraggingItem    = false;
     bool _isFloating        = true;
@@ -249,81 +249,81 @@ private:
     int _cameraFlashStartTime   = 0;
     int _mouseStillStartTime    = 0;  
 
-    //¿ªÊ¼ÍÏ¶¯
+    //å¼€å§‹æ‹–åŠ¨
     void _StartDrag();
 
-    //½áÊøÍÏ¶¯
+    //ç»“æŸæ‹–åŠ¨
     void _EndDrag();
 
-    //¿ªÊ¼ÍÏ¶¯ÎïÆ·
+    //å¼€å§‹æ‹–åŠ¨ç‰©å“
     void _StartDragItem();
 
-    //½áÊøÍÏ¶¯ÎïÆ·
+    //ç»“æŸæ‹–åŠ¨ç‰©å“
     void _EndDragItem();
 
-    //¸ü»»ÎïÆ·
+    //æ›´æ¢ç‰©å“
     void _ChangeItem(int item, bool dropItem);
 
-    //»ñÈ¡Ò»ÏîËæ»úÎïÆ·£¨²»»á»ñÈ¡Ïà»ú»òµ±Ç°³ÖÓĞµÄÎïÆ·)
+    //è·å–ä¸€é¡¹éšæœºç‰©å“ï¼ˆä¸ä¼šè·å–ç›¸æœºæˆ–å½“å‰æŒæœ‰çš„ç‰©å“)
     int _GetRandomItem() const;
 
-    //»½ĞÑ
+    //å”¤é†’
     void _Wake();
 
-    //´ßÃß
+    //å‚¬çœ 
     void _Sleep();
 
-    //×øÏÂ
+    //åä¸‹
     void _Sit();
 
-    //Æ¯¸¡
+    //æ¼‚æµ®
     void _Float();
 
-    //¿ªÊ¼²»ÃĞÑÛ»òÃĞÑÛµÄÎ¢Ğ¦
+    //å¼€å§‹ä¸çœ¯çœ¼æˆ–çœ¯çœ¼çš„å¾®ç¬‘
     void _StartSmile(bool withEyeSquinted);
 
-    //½áÊøÎ¢Ğ¦
+    //ç»“æŸå¾®ç¬‘
     void _EndSmile();
 
-    //Õ£ÑÛ
+    //çœ¨çœ¼
     void _StartEyeBlink();
 
-    //½áÊøÕ£ÑÛ
+    //ç»“æŸçœ¨çœ¼
     void _EndEyeBlink();
 
-    //¿´ÏòÆÁÄ»Íâ
+    //çœ‹å‘å±å¹•å¤–
     void _StartLookAtOuter();
 
-    //ÖØĞÂ×·×ÙÊó±ê
+    //é‡æ–°è¿½è¸ªé¼ æ ‡
     void _EndLookAtOuter();
 
-    //Ïà»úÉÁË¸
+    //ç›¸æœºé—ªçƒ
     void _StartCameraFlash();
 
-    //½áÊøÏà»úÉÁË¸
+    //ç»“æŸç›¸æœºé—ªçƒ
     void _EndCameraFlash();
 
-    //½ûÓÃ»ò²»½ûÓÃÈÈ¼üµÄÒş²Ø»­Ãæ
+    //ç¦ç”¨æˆ–ä¸ç¦ç”¨çƒ­é”®çš„éšè—ç”»é¢
     void _Hide(bool withHotkeyDisabled);
 
-    //ÏÔÊ¾»­Ãæ£¬±£Ö¤ÈÈ¼ü´ò¿ª
+    //æ˜¾ç¤ºç”»é¢ï¼Œä¿è¯çƒ­é”®æ‰“å¼€
     void _Show();
 
 
-    //ÆÁÄ»½ØÍ¼Íê³É»Øµ÷
+    //å±å¹•æˆªå›¾å®Œæˆå›è°ƒ
     void _OnScreenshotGrabbed();
 
-    //ÆÁÄ»½ØÍ¼¿ªÊ¼±à¼­»Øµ÷
+    //å±å¹•æˆªå›¾å¼€å§‹ç¼–è¾‘å›è°ƒ
     void _OnScreenshotEditStarted();
 
-    //ÆÁÄ»½ØÍ¼½áÊø±à¼­»Øµ÷
+    //å±å¹•æˆªå›¾ç»“æŸç¼–è¾‘å›è°ƒ
     void _OnScreenshotEditEnded(bool accept);
 
-    //Æô¶¯Æ÷Æô¶¯»Øµ÷
+    //å¯åŠ¨å™¨å¯åŠ¨å›è°ƒ
     void _OnThLauncherLaunched();
 
 
-    //²Ëµ¥¼°ÆäÊÂ¼ş
+    //èœå•åŠå…¶äº‹ä»¶
     QMenu* _menu = nullptr;
     QAction* _actionClose                   = nullptr;
     QAction* _actionSitOrFloat              = nullptr;
@@ -339,39 +339,39 @@ private:
     QAction* _actionHideOrShow              = nullptr;
     QAction* _actionOpenThLauncher          = nullptr;
 
-    //²Ëµ¥:¹Ø±Õ¶¯×÷
+    //èœå•:å…³é—­åŠ¨ä½œ
     void _OnActionClose();
 
-    //²Ëµ¥:½ØÍ¼¶¯×÷
+    //èœå•:æˆªå›¾åŠ¨ä½œ
     void _OnActionTakeScreenshot();
 
-    //²Ëµ¥:¿ìËÙ½ØÍ¼¶¯×÷
+    //èœå•:å¿«é€Ÿæˆªå›¾åŠ¨ä½œ
     void _OnActionTakeFastScreenshot();
 
-    //²Ëµ¥:´ò¿ª½ØÍ¼ÎÄ¼ş¼Ğ¶¯×÷
+    //èœå•:æ‰“å¼€æˆªå›¾æ–‡ä»¶å¤¹åŠ¨ä½œ
     void _OnActionOpenScreenshotFolder();
 
-    //²Ëµ¥:±à¼­½ØÍ¼¶¯×÷
+    //èœå•:ç¼–è¾‘æˆªå›¾åŠ¨ä½œ
     void _OnActionEditScreenshot();
 
-    //²Ëµ¥:×øÏÂ»òÆğÉí¶¯×÷
+    //èœå•:åä¸‹æˆ–èµ·èº«åŠ¨ä½œ
     void _OnActionSitOrFloat();
 
-    //²Ëµ¥:´ßÃß»ò»½ĞÑ¶¯×÷
+    //èœå•:å‚¬çœ æˆ–å”¤é†’åŠ¨ä½œ
     void _OnActionSleepOrWake();
 
-    //²Ëµ¥:´ò¿ªÉèÖÃ²Ëµ¥¶¯×÷
+    //èœå•:æ‰“å¼€è®¾ç½®èœå•åŠ¨ä½œ
     void _OnActionOpenSettingsMenu();
 
-    //²Ëµ¥:ÏÔÊ¾»òÒş²Ø¶¯×÷
+    //èœå•:æ˜¾ç¤ºæˆ–éšè—åŠ¨ä½œ
     void _OnActionHideOrShow();
 
-    //²Ëµ¥:´ò¿ª¹ØÓÚ½çÃæ¶¯×÷
+    //èœå•:æ‰“å¼€å…³äºç•Œé¢åŠ¨ä½œ
     void _OnActionOpenAboutsDialog();
 
-    //²Ëµ¥:ÇĞ»»ÎïÆ·¶¯×÷
+    //èœå•:åˆ‡æ¢ç‰©å“åŠ¨ä½œ
     void _OnActionChangeItem();
 
-    //²Ëµ¥:´ò¿ª¶«·½Æô¶¯Æ÷
+    //èœå•:æ‰“å¼€ä¸œæ–¹å¯åŠ¨å™¨
     void _OnActionOpenThLauncher();
 };

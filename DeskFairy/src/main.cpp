@@ -1,6 +1,6 @@
 ﻿#include <QtWidgets/QApplication>
 #include <QWidget>
-#include <QTextCodeC>
+#include <QTextCodec>
 #include <QTime>
 #include <locale>
 #include "Live2DWidget.h"
@@ -8,11 +8,6 @@
 
 int main(int argc, char *argv[])
 {
-    std::locale::global(std::locale(""));
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
-
-    qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
-
     Settings::Load();
 
     QApplication a(argc, argv);

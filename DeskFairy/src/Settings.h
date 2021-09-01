@@ -1,5 +1,4 @@
 ﻿#pragma once
-#pragma execution_character_set("utf-8")
 
 #include <QDialog>
 #include <QLabel>
@@ -265,7 +264,7 @@ public:
 	}
 	void Apply() override
 	{
-		*_data = _ui->text().toLocal8Bit();
+		*_data = _ui->text().toStdString();
 	}
 private:
 	std::string* _data = nullptr;
@@ -287,7 +286,7 @@ public:
 	}
 	void Apply() override
 	{
-		*_data = _ui->text().toLocal8Bit();
+		*_data = _ui->text().toStdString();
 	}
 private:
 	std::string* _data = nullptr;

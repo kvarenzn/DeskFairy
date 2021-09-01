@@ -12,7 +12,7 @@ namespace Settings
 	int size = 600;
 	bool sleep = true;
 	bool fallWhenSleep = true;
-	std::string screenshotPath = "../screenshots";
+	std::string screenshotPath = "./screenshots";
 	QKeySequence screenshotFastHotKey = QKeySequence::fromString("Ctrl+P");
 	QKeySequence exitHotKey = QKeySequence();
 	QKeySequence hideHotKey = QKeySequence();
@@ -24,7 +24,6 @@ namespace Settings
 	int mainFps = 30;
 	int itemFps = 30;
 	bool expandToStateBar = false;
-	QKeySequence thLauncherHotkey = QKeySequence();
 	QKeySequence editScreenshotHotkey = QKeySequence();
 	QKeySequence openScreenshotHotkey = QKeySequence();
 
@@ -63,7 +62,6 @@ namespace Settings
 		out << mainFps << std::endl;
 		out << itemFps << std::endl;
 		out << expandToStateBar << std::endl;
-		out << HotkeyToString(thLauncherHotkey) << std::endl;
 		out << HotkeyToString(editScreenshotHotkey) << std::endl;
 		out << HotkeyToString(openScreenshotHotkey) << std::endl;
 
@@ -99,7 +97,6 @@ namespace Settings
 		in >> mainFps;
 		in >> itemFps;
 		in >> expandToStateBar;
-		std::getline(in.ignore(), temp), thLauncherHotkey = StringToHotkey(temp), temp.clear();
 		std::getline(in, temp), editScreenshotHotkey = StringToHotkey(temp), temp.clear();
 		std::getline(in, temp), openScreenshotHotkey = StringToHotkey(temp), temp.clear();
 
@@ -111,37 +108,36 @@ namespace Settings
 SettingsMenu::SettingsMenu(QWidget* parent)
 	: QDialog(parent)
 {
-	this->setWindowTitle("DeskFairy->ÉèÖÃ");
+	this->setWindowTitle("DeskFairy->è®¾ç½®");
 
 	QFont font = this->font();
 	font.setPixelSize(Def::settingsMenuFontSize);
 	this->setFont(font);
 
 	QPushButton* _applyBtn = new QPushButton(this);
-	_applyBtn->setText("È·ÈÏ");
+	_applyBtn->setText("ç¡®è®¤");
 	connect(_applyBtn, &QPushButton::clicked, this, &SettingsMenu::Apply);
 	QPushButton* _cancelBtn = new QPushButton(this);
-	_cancelBtn->setText("È¡Ïû");
+	_cancelBtn->setText("å–æ¶ˆ");
 	connect(_cancelBtn, &QPushButton::clicked, this, &SettingsMenu::Cancel);
 
-	_items.push_back(new SettingItemInt("³ß´ç", &Settings::size, 50, 2000, 10));
-	_items.push_back(new SettingItemInt("×À³èÖ¡ÂÊ", &Settings::mainFps, 15, 60, 5));
-	_items.push_back(new SettingItemInt("µÀ¾ßÖ¡ÂÊ", &Settings::itemFps, 15, 60, 5));
-	_items.push_back(new SettingItemBool("»î¶¯ÇøÓòÍØÕ¹µ½×´Ì¬À¸", &Settings::expandToStateBar));
-	_items.push_back(new SettingItemHotKey("´ò¿ª¶«·½Æô¶¯Æ÷", &Settings::thLauncherHotkey));
-	_items.push_back(new SettingItemBool("×Ô¶¯Ë¯Ãß", &Settings::sleep));
-	_items.push_back(new SettingItemBool("Ë¯ÃßÊ±ÏÂÂä", &Settings::fallWhenSleep));
-	_items.push_back(new SettingItemHotKey("Ñ¡Çø½ØÍ¼", &Settings::screenshotHotKey));
-	_items.push_back(new SettingItemHotKey("¿ìËÙ½ØÍ¼", &Settings::screenshotFastHotKey));
-	_items.push_back(new SettingItemHotKey("±à¼­½ØÍ¼", &Settings::editScreenshotHotkey));
-	_items.push_back(new SettingItemHotKey("´ò¿ª½ØÍ¼±£´æÂ·¾¶", &Settings::openScreenshotHotkey));
-	_items.push_back(new SettingItemPath("½ØÍ¼±£´æÂ·¾¶", &Settings::screenshotPath));
-	_items.push_back(new SettingItemBool("½ØÍ¼Ê±Òþ²Ø", &Settings::hideWhenScreenshot));
-	_items.push_back(new SettingItemHotKey("Çå³ýµÀ¾ß", &Settings::clearItemHotKey));
-	_items.push_back(new SettingItemBool("µÀ¾ßÉú³É", &Settings::allowItemSpawn));
-	_items.push_back(new SettingItemInt("µÀ¾ßÖØÁ¦", &Settings::itemGravity, -20, 20, 1));
-	_items.push_back(new SettingItemHotKey("Òþ²Ø", &Settings::hideHotKey));
-	_items.push_back(new SettingItemHotKey("ÍË³ö", &Settings::exitHotKey));
+	_items.push_back(new SettingItemInt("å°ºå¯¸", &Settings::size, 50, 2000, 10));
+	_items.push_back(new SettingItemInt("æ¡Œå® å¸§çŽ‡", &Settings::mainFps, 15, 60, 5));
+	_items.push_back(new SettingItemInt("é“å…·å¸§çŽ‡", &Settings::itemFps, 15, 60, 5));
+	_items.push_back(new SettingItemBool("æ´»åŠ¨åŒºåŸŸæ‹“å±•åˆ°çŠ¶æ€æ ", &Settings::expandToStateBar));
+	_items.push_back(new SettingItemBool("è‡ªåŠ¨ç¡çœ ", &Settings::sleep));
+	_items.push_back(new SettingItemBool("ç¡çœ æ—¶ä¸‹è½", &Settings::fallWhenSleep));
+	_items.push_back(new SettingItemHotKey("é€‰åŒºæˆªå›¾", &Settings::screenshotHotKey));
+	_items.push_back(new SettingItemHotKey("å¿«é€Ÿæˆªå›¾", &Settings::screenshotFastHotKey));
+	_items.push_back(new SettingItemHotKey("ç¼–è¾‘æˆªå›¾", &Settings::editScreenshotHotkey));
+	_items.push_back(new SettingItemHotKey("æ‰“å¼€æˆªå›¾ä¿å­˜è·¯å¾„", &Settings::openScreenshotHotkey));
+	_items.push_back(new SettingItemPath("æˆªå›¾ä¿å­˜è·¯å¾„", &Settings::screenshotPath));
+	_items.push_back(new SettingItemBool("æˆªå›¾æ—¶éšè—", &Settings::hideWhenScreenshot));
+	_items.push_back(new SettingItemHotKey("æ¸…é™¤é“å…·", &Settings::clearItemHotKey));
+	_items.push_back(new SettingItemBool("é“å…·ç”Ÿæˆ", &Settings::allowItemSpawn));
+	_items.push_back(new SettingItemInt("é“å…·é‡åŠ›", &Settings::itemGravity, -20, 20, 1));
+	_items.push_back(new SettingItemHotKey("éšè—", &Settings::hideHotKey));
+	_items.push_back(new SettingItemHotKey("é€€å‡º", &Settings::exitHotKey));
 
 	QVBoxLayout* windowLayout = new QVBoxLayout;
 	QGridLayout* settingsLayout = new QGridLayout;
@@ -170,7 +166,7 @@ SettingsMenu::SettingsMenu(QWidget* parent)
 	buttonsLayout->addWidget(_cancelBtn);
 	buttonsLayout->addWidget(_applyBtn);
 
-	QLabel* title = new QLabel("ÉèÖÃ");
+	QLabel* title = new QLabel("è®¾ç½®");
 	QHBoxLayout* lay = new QHBoxLayout;
 	QGroupBox* titleGroup = new QGroupBox;
 	title->setAlignment(Qt::AlignHCenter);

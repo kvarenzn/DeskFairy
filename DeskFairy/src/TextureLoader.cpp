@@ -43,7 +43,7 @@ void TextureLoader::ReleaseInstance()
 
 TextureLoader::TextureInfo* TextureLoader::CreateTextureFromPngFile(std::string fileName)
 {
-    //寻找是否已经加载过该文件
+    //瀵绘壘鏄惁宸茬粡鍔犺浇杩囪鏂囦欢
     for (auto tex : _textures)
     {
         if (tex->fileName == fileName)

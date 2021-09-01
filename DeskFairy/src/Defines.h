@@ -24,7 +24,7 @@ namespace Def
 {
 	extern const double pi;
 
-	extern const DebugLogMode debugLogMode;		//½öÔÚdebug±àÒëÏÂÓĞĞ§
+	extern const DebugLogMode debugLogMode;		//ä»…åœ¨debugç¼–è¯‘ä¸‹æœ‰æ•ˆ
 	extern const char* debugLogFilePath;
 
 	extern const char* resourcePath;

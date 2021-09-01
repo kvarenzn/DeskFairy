@@ -5,9 +5,9 @@ namespace Def
 	const double pi = 3.1415926536;
 
 	const DebugLogMode debugLogMode = DEBUG_TO_QT;
-	const char* debugLogFilePath = "../logs";
+	const char* debugLogFilePath = "./logs";
 
-	const char* resourcePath = "../resources";
+	const char* resourcePath = "./resources";
 
 	const int mouseTrackTimePerFrame = 60;
 
@@ -15,12 +15,10 @@ namespace Def
 	const int settingsMenuLabelWidth = 150;
 	const int settingsMenuWidgetWidth = 200;
 	const int settingsMenuItemHeight = 25;
-	const char* settingsSavePath = "../profiles";
+	const char* settingsSavePath = "./profiles";
 
 	const int draggingPointSize = 10;
 	const int editButtonSize = 40;
-
-	const char* thLauncherSavePath = "../profiles";
 
 	const double sightTrackingSpeed = 0.005;
 	const int sightTrackingRangeHorizotalForward = 700;

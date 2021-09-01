@@ -1,11 +1,8 @@
 #include "MouseTracker.h"
 #include <QMouseEvent>
+#include <QCursor>
 #include "Logger.h"
 #include "Defines.h"
-
-#ifdef WIN32
-#include <Windows.h>
-#endif	// WIN32
 
 MouseTracker::MouseTracker(QObject* parent)
 	: QObject(parent)
@@ -23,15 +20,7 @@ MouseTracker::~MouseTracker()
 
 void MouseTracker::_trackMouse()
 {
-	int mouseX = 0;
-	int mouseY = 0;
+	auto pos = QCursor::pos();
 
-#ifdef WIN32
-	POINT p;
-	GetCursorPos(&p);
-	mouseX = p.x;
-	mouseY = p.y;
-#endif	// WIN32
-
-	mouseMoveSignal(mouseX, mouseY);
+	mouseMoveSignal(pos.x(), pos.y());
 }

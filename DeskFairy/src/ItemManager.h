@@ -92,7 +92,6 @@ private:
 	b2World* _world = nullptr;
 	b2Body* _nullBody = nullptr;
 	b2Body* _border = nullptr;
-	b2MouseJoint* _mouseJoint = nullptr;
 
 	std::list<Item*> _items;
 	Item* _draggingItem = nullptr;
@@ -100,8 +99,11 @@ private:
 	bool _draggingItemFromLive2D = false;
 
 	MouseTracker* _mouseTracker = nullptr;
-	int _mouseX = 0;
-	int _mouseY = 0;
+	int lastPosX = 0;
+	int lastPosY = 0;
+
+	int velocityX = 0;
+	int velocityY = 0;
 
 	b2Vec2 _screenSize;
 	b2Vec2 _worldSize;

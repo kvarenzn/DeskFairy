@@ -96,7 +96,7 @@ void ScreenshotWidget::paintEvent(QPaintEvent *e)
     QBrush brush = painter.brush();
     QPen pen = painter.pen();
 
-    //°µÉ«±³¾°£¨ÈÃ½ØÍ¼±ä°µ
+    //æš—è‰²èƒŒæ™¯ï¼ˆè®©æˆªå›¾å˜æš—
     brush.setColor(QColor(15, 10, 0)); 
     brush.setStyle(Qt::BrushStyle::SolidPattern);
     pen.setWidth(0);
@@ -104,12 +104,12 @@ void ScreenshotWidget::paintEvent(QPaintEvent *e)
     painter.setPen(pen);
     painter.setOpacity(1.0);
     painter.drawRect(this->rect());
-    //°ëÍ¸Ã÷½ØÍ¼
+    //åŠé€æ˜æˆªå›¾
     painter.setBrush(Qt::BrushStyle::SolidPattern);
     painter.setOpacity(0.6);
     painter.drawPixmap(this->rect(), _image);
 
-    //Êó±ê¶¨Î»
+    //é¼ æ ‡å®šä½
     painter.setOpacity(1.0);
     pen.setStyle(Qt::PenStyle::DashLine);
     pen.setColor(QColor(255, 255, 255, 127));
@@ -122,7 +122,7 @@ void ScreenshotWidget::paintEvent(QPaintEvent *e)
 
     if (_selected || _dragging)
     {
-        //²»Í¸Ã÷Ñ¡ÔñÇøÓò½ØÍ¼
+        //ä¸é€æ˜é€‰æ‹©åŒºåŸŸæˆªå›¾
         QRect rect = _GetSelect();
         int w = rect.width() * (_image.width() / (double)_width);
         int h = rect.height() * (_image.height() / (double)_height);
@@ -130,7 +130,7 @@ void ScreenshotWidget::paintEvent(QPaintEvent *e)
         int y = rect.y() * (_image.height() / (double)_height);
         painter.drawPixmap(_GetSelect(), _image, QRect(x, y, w, h));
 
-        //Ñ¡Ôñ¿ò
+        //é€‰æ‹©æ¡†
         pen.setStyle(Qt::PenStyle::SolidLine);
         pen.setColor(QColor(200, 30, 10));
         pen.setWidth(5);
@@ -157,7 +157,7 @@ void ScreenshotWidget::paintEvent(QPaintEvent *e)
 
         if (_selected && _IsMouseOnSelect(Def::draggingPointSize / 2))
         {
-            //ÍÏ¶¯µã
+            //æ‹–åŠ¨ç‚¹
             int nowPoint = _draggingPoint == P_CTR ? P_CTR : _GetMouseOnDragPoint();
             for (int id = DRAGPOINT_COUNT - 1; id >= 1; id--)
             {
@@ -182,39 +182,39 @@ void ScreenshotWidget::mouseMoveEvent(QMouseEvent* e)
     _mouseY = e->globalPos().y();
     if (_dragging)
     {
-        //ÒÑÑ¡ÔñÊ±ÍÏ¶¯µ÷Õû´óĞ¡
+        //å·²é€‰æ‹©æ—¶æ‹–åŠ¨è°ƒæ•´å¤§å°
         if (_selected)
         {
-            //°´µ½ÍÏ¶¯µãÊ±¿ªÊ¼µ÷Õû´óĞ¡
+            //æŒ‰åˆ°æ‹–åŠ¨ç‚¹æ—¶å¼€å§‹è°ƒæ•´å¤§å°
             if (_draggingPoint)
             {               
                 QPoint delta = QPoint(_mouseX - _dragStartMouseX, _mouseY - _dragStartMouseY);
                 switch (_draggingPoint)
                 {
-                //½ÇÂäµã£ºÍÏ¶¯µã¾ÍÊÇp2 Ö±½Óµ÷Õû¼´¿É
+                //è§’è½ç‚¹ï¼šæ‹–åŠ¨ç‚¹å°±æ˜¯p2 ç›´æ¥è°ƒæ•´å³å¯
                 case ScreenshotWidget::P_BR:
                 case ScreenshotWidget::P_BL:
                 case ScreenshotWidget::P_TR:
                 case ScreenshotWidget::P_TL:
                     _p2 = _dragStartP2 + delta;
                     break;
-                //×óÓÒ±ß½çµã£ºÍÏ¶¯µãÓëp2XÏà¹Ø
+                //å·¦å³è¾¹ç•Œç‚¹ï¼šæ‹–åŠ¨ç‚¹ä¸p2Xç›¸å…³
                 case ScreenshotWidget::P_MR:                  
                 case ScreenshotWidget::P_ML:
                     _p2.setX(_dragStartP2.x() + delta.x());
                     break;
-                //ÉÏÏÂ±ß½çµã£ºÍÏ¶¯µãÓëp2YÏà¹Ø
+                //ä¸Šä¸‹è¾¹ç•Œç‚¹ï¼šæ‹–åŠ¨ç‚¹ä¸p2Yç›¸å…³
                 case ScreenshotWidget::P_MT:
                 case ScreenshotWidget::P_MB:
                     _p2.setY(_dragStartP2.y() + delta.y());
                     break;
-                //ÖĞĞÄµã£º¶Ôp1p2½øĞĞÕûÌåÎ»ÒÆ
+                //ä¸­å¿ƒç‚¹ï¼šå¯¹p1p2è¿›è¡Œæ•´ä½“ä½ç§»
                 case ScreenshotWidget::P_CTR:
                     _p1 = _dragStartP1 + delta;
                     _p2 = _dragStartP2 + delta;
                     {
                         QPoint size = _p2 - _p1;
-                        //ÏŞÖÆ
+                        //é™åˆ¶
                         if (_p1.x() < 0) _p1.setX(0), _p2.setX(size.x());
                         if (_p1.y() < 0) _p1.setY(0), _p2.setY(size.y());
                         if (_p2.x() > _width) _p2.setX(_width), _p1.setX(_width - size.x());
@@ -226,7 +226,7 @@ void ScreenshotWidget::mouseMoveEvent(QMouseEvent* e)
                 }
             }
         }
-        //Î´Ñ¡ÔñÊ±ÍÏ¶¯Ñ¡Ôñ
+        //æœªé€‰æ‹©æ—¶æ‹–åŠ¨é€‰æ‹©
         else
         {
             _p2 = QPoint(_mouseX, _mouseY);
@@ -240,18 +240,18 @@ void ScreenshotWidget::mousePressEvent(QMouseEvent* e)
     if (e->button() == Qt::MouseButton::LeftButton && !_dragging)
     {
         _dragging = true;
-        //ÒÑÑ¡ÔñÊ±
+        //å·²é€‰æ‹©æ—¶
         if (_selected)
         {
-            //°´µ½ÍÏ¶¯µãÊ±¿ªÊ¼µ÷Õû´óĞ¡
+            //æŒ‰åˆ°æ‹–åŠ¨ç‚¹æ—¶å¼€å§‹è°ƒæ•´å¤§å°
             int id = _GetMouseOnDragPoint();
             if (id)
             {     
                 _box->hide();     
                 _draggingPoint = id;
                 QRect rect = this->_GetSelect();
-                //ÉèÖÃp1¡¢p2
-                //p1ÎªÁíÍâÒ»¸öµã p2ÎªÍÏ¶¯µÄµã»òºÍÍÏ¶¯Ïà¹ØµÄµã
+                //è®¾ç½®p1ã€p2
+                //p1ä¸ºå¦å¤–ä¸€ä¸ªç‚¹ p2ä¸ºæ‹–åŠ¨çš„ç‚¹æˆ–å’Œæ‹–åŠ¨ç›¸å…³çš„ç‚¹
                 switch (_draggingPoint)
                 {
                 case ScreenshotWidget::P_BR:
@@ -298,7 +298,7 @@ void ScreenshotWidget::mousePressEvent(QMouseEvent* e)
                 _dragStartMouseX = _mouseX;
                 _dragStartMouseY = _mouseY;              
             }
-            //Ã»°´µ½ÍÏ¶¯µãÇĞ²»ÔÚÑ¡Ôñ¿òÄÚÊ±ÖØĞÂÑ¡Ôñ
+            //æ²¡æŒ‰åˆ°æ‹–åŠ¨ç‚¹åˆ‡ä¸åœ¨é€‰æ‹©æ¡†å†…æ—¶é‡æ–°é€‰æ‹©
             else if(!_IsMouseOnSelect(Def::draggingPointSize / 2))
             {
                 _box->hide();
@@ -306,7 +306,7 @@ void ScreenshotWidget::mousePressEvent(QMouseEvent* e)
                 _p2 = _p1 = QPoint(_mouseX, _mouseY);
             }
         }
-        //Î´Ñ¡ÔñÊ±¿ªÊ¼Ñ¡Ôñ
+        //æœªé€‰æ‹©æ—¶å¼€å§‹é€‰æ‹©
         else
         {
            _p2 = _p1 = QPoint(_mouseX, _mouseY);
@@ -314,7 +314,7 @@ void ScreenshotWidget::mousePressEvent(QMouseEvent* e)
     }
     if (e->button() == Qt::MouseButton::RightButton)
     {
-        //È¡ÏûÑ¡Ôñ
+        //å–æ¶ˆé€‰æ‹©
         _selected = false;
     }
     update();
@@ -325,10 +325,10 @@ void ScreenshotWidget::mouseReleaseEvent(QMouseEvent* e)
     if (e->button() == Qt::MouseButton::LeftButton)
     {
         _dragging = false;
-        //ÒÑÑ¡ÔñÊ±½áÊøµ÷Õû´óĞ¡
+        //å·²é€‰æ‹©æ—¶ç»“æŸè°ƒæ•´å¤§å°
         if (_selected)
         {
-            //½áÊøÍÏ¶¯µ÷Õû
+            //ç»“æŸæ‹–åŠ¨è°ƒæ•´
             if (_draggingPoint)
             {
                 _draggingPoint = P_NONE; 
@@ -336,7 +336,7 @@ void ScreenshotWidget::mouseReleaseEvent(QMouseEvent* e)
                 _box->show();
             }
         }
-        //Î´Ñ¡ÔñÊ±½áÊøÑ¡Ôñ
+        //æœªé€‰æ‹©æ—¶ç»“æŸé€‰æ‹©
         else
         {
             _Normalize();
@@ -466,54 +466,54 @@ void ScreenshotWidget::_UpdateBoxPos()
 {
     QPoint pos(0, 0);
     QRect rect = _GetSelect();
-    //ÓÒÏÂ½ÇÍâ²¿
+    //å³ä¸‹è§’å¤–éƒ¨
     if (rect.bottomRight().y() + 2 + boxSize.height() <= _height)
     {
         pos.setY(rect.bottomRight().y() + 2);
-        //ÓÒ²à³¯ÄÚ
+        //å³ä¾§æœå†…
         if (rect.bottomRight().x() - boxSize.width() >= 0)
             pos.setX(rect.bottomRight().x() - boxSize.width());
-        //×ó²à³¯ÄÚ
+        //å·¦ä¾§æœå†…
         else if(rect.bottomLeft().x() + boxSize.width() <= _width)
             pos.setX(rect.bottomLeft().x());
-        //ÓÒ²à³¯Íâ
+        //å³ä¾§æœå¤–
         else if (rect.bottomRight().x() - boxSize.width() <= _width)
             pos.setX(rect.bottomRight().x());
-        //×ó²à³¯Íâ
+        //å·¦ä¾§æœå¤–
         else
             pos.setX(rect.bottomLeft().x() - boxSize.width());
     }
-    //ÓÒÉÏ½ÇÍâ²¿
+    //å³ä¸Šè§’å¤–éƒ¨
     else if (rect.topRight().y() - 2 - boxSize.height() >= 0)
     {
         pos.setY(rect.topRight().y() - 2 - boxSize.height());
-        //ÓÒ²à³¯ÄÚ
+        //å³ä¾§æœå†…
         if (rect.bottomRight().x() - boxSize.width() >= 0)
             pos.setX(rect.bottomRight().x() - boxSize.width());
-        //×ó²à³¯ÄÚ
+        //å·¦ä¾§æœå†…
         else if (rect.bottomLeft().x() + boxSize.width() <= _width)
             pos.setX(rect.bottomLeft().x());
-        //ÓÒ²à³¯Íâ
+        //å³ä¾§æœå¤–
         else if (rect.bottomRight().x() - boxSize.width() <= _width)
             pos.setX(rect.bottomRight().x());
-        //×ó²à³¯Íâ
+        //å·¦ä¾§æœå¤–
         else
             pos.setX(rect.bottomLeft().x() - boxSize.width());
     }
-    //ÓÒÏÂ½ÇÄÚ²¿
+    //å³ä¸‹è§’å†…éƒ¨
     else
     {
         pos.setY(rect.bottomRight().y() - boxSize.height());
-        //ÓÒ²à³¯ÄÚ
+        //å³ä¾§æœå†…
         if (rect.bottomRight().x() - boxSize.width() >= 0)
             pos.setX(rect.bottomRight().x() - boxSize.width());
-        //×ó²à³¯ÄÚ
+        //å·¦ä¾§æœå†…
         else if (rect.bottomLeft().x() + boxSize.width() <= _width)
             pos.setX(rect.bottomLeft().x());
-        //ÓÒ²à³¯Íâ
+        //å³ä¾§æœå¤–
         else if (rect.bottomRight().x() - boxSize.width() <= _width)
             pos.setX(rect.bottomRight().x());
-        //×ó²à³¯Íâ
+        //å·¦ä¾§æœå¤–
         else
             pos.setX(rect.bottomLeft().x() - boxSize.width());
     }
@@ -524,7 +524,7 @@ void ScreenshotWidget::_UpdateBoxPos()
 FileSelector::FileSelector() : QObject(nullptr)
 {
     _file = new QFileDialog;
-    _file->setWindowTitle("Ñ¡ÔñÍ¼Æ¬");
+    _file->setWindowTitle("é€‰æ‹©å›¾ç‰‡");
     _file->setNameFilter("Images(*.png)");
     _file->setViewMode(QFileDialog::Detail);
 }

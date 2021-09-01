@@ -12,6 +12,7 @@
 #include <QContextMenuEvent>
 #include <QTimer>
 #include <QMenu>
+#include <QRandomGenerator>
 #include <qhotkey.h>
 
 #include <cmath>
@@ -26,10 +27,8 @@
 #include "ScreenGrabber.h"
 #include "Settings.h"
 #include "ItemManager.h"
-#include "ThLauncher.h"
 
-
-//¹©CubismÊ¹ÓÃµÄÈÕÖ¾Êä³öº¯Êı
+//ä¾›Cubismä½¿ç”¨çš„æ—¥å¿—è¾“å‡ºå‡½æ•°
 static void CubismLogFuncion(const Csm::csmChar* s)
 {
 	Logger::Print("%s", s);
@@ -40,7 +39,7 @@ static void CubismLogFuncion(const Csm::csmChar* s)
 Live2DWidget::Live2DWidget(std::string modelName)
 	: QOpenGLWidget(Q_NULLPTR)
 {
-	//³õÊ¼»¯ ´°¿ÚÊôĞÔ
+	//åˆå§‹åŒ– çª—å£å±æ€§
 	TransparentWindow::Setup(this, Settings::expandToStateBar);
 	this->setAttribute(Qt::WA_QuitOnClose);
 	_screenWidth = this->width();
@@ -50,13 +49,13 @@ Live2DWidget::Live2DWidget(std::string modelName)
 	_MoveModelTo(_screenWidth * 0.5, _screenHeight * 0.5);
 	this->show();
 
-	//³õÊ¼»¯ ¸üĞÂÆ÷
+	//åˆå§‹åŒ– æ›´æ–°å™¨
 	_frameTime = 1000 / Settings::mainFps;
 	_timer = new QTimer(this);
 	_timer->start(_frameTime);
 	connect(_timer, &QTimer::timeout, this, &Live2DWidget::_Update);
 
-	//³õÊ¼»¯ ¸÷×é¼ş¼°ĞÅºÅ²Û
+	//åˆå§‹åŒ– å„ç»„ä»¶åŠä¿¡å·æ§½
 	_mouseTracker = new MouseTracker(this);
 	connect(_mouseTracker, &MouseTracker::mouseMoveSignal, this, &Live2DWidget::MouseMoveEvent);
 
@@ -73,54 +72,54 @@ Live2DWidget::Live2DWidget(std::string modelName)
 	connect(this, &Live2DWidget::DragItemSignal, _itemManager, &ItemManager::StartDraggingItemFromLive2D);
 	connect(this, &Live2DWidget::EndDragItemSignal, _itemManager, &ItemManager::EndDragItemFromLive2D);
 
-	//³õÊ¼»¯ ²Ëµ¥
+	//åˆå§‹åŒ– èœå•
 	_menu = new QMenu(this);
 
 	QMenu* _screenshotMenu = new QMenu(_menu);
-	_screenshotMenu->setTitle("½ØÍ¼");
+	_screenshotMenu->setTitle("æˆªå›¾");
 
 	_actionTakeScreenshot = new QAction(this);
-	_actionTakeScreenshot->setText("Ñ¡Çø½ØÍ¼");
+	_actionTakeScreenshot->setText("é€‰åŒºæˆªå›¾");
 	connect(_actionTakeScreenshot, &QAction::triggered, this, &Live2DWidget::_OnActionTakeScreenshot);
 	_screenshotMenu->addAction(_actionTakeScreenshot);
 
 	_actionTakeFastScreenshot = new QAction(this);
-	_actionTakeFastScreenshot->setText("¿ìËÙ½ØÍ¼");
+	_actionTakeFastScreenshot->setText("å¿«é€Ÿæˆªå›¾");
 	connect(_actionTakeFastScreenshot, &QAction::triggered, this, &Live2DWidget::_OnActionTakeFastScreenshot);
 	_screenshotMenu->addAction(_actionTakeFastScreenshot);
 
 	_actionEditScreenshot = new QAction(this);
-	_actionEditScreenshot->setText("²Ã¼ôÒÑÓĞ½ØÍ¼");
+	_actionEditScreenshot->setText("è£å‰ªå·²æœ‰æˆªå›¾");
 	connect(_actionEditScreenshot, &QAction::triggered, this, &Live2DWidget::_OnActionEditScreenshot);
 	_screenshotMenu->addAction(_actionEditScreenshot);
 
 	_actionOpenScreenshotFolder = new QAction(this);
-	_actionOpenScreenshotFolder->setText("´ò¿ª½ØÍ¼ÎÄ¼ş¼Ğ");
+	_actionOpenScreenshotFolder->setText("æ‰“å¼€æˆªå›¾æ–‡ä»¶å¤¹");
 	connect(_actionOpenScreenshotFolder, &QAction::triggered, this, &Live2DWidget::_OnActionOpenScreenshotFolder);
 	_screenshotMenu->addAction(_actionOpenScreenshotFolder);
 
 	_menu->addMenu(_screenshotMenu);
 
 	QMenu* _actionMenu = new QMenu(_menu);
-	_actionMenu->setTitle("²Ù×÷");
+	_actionMenu->setTitle("æ“ä½œ");
 
 	_actionSitOrFloat = new QAction(this);
-	_actionSitOrFloat->setText("×øÏÂ");
+	_actionSitOrFloat->setText("åä¸‹");
 	connect(_actionSitOrFloat, &QAction::triggered, this, &Live2DWidget::_OnActionSitOrFloat);
 	_actionMenu->addAction(_actionSitOrFloat);
 
 	_actionSleepOrWake = new QAction(this);
-	_actionSleepOrWake->setText("´ßÃß");
+	_actionSleepOrWake->setText("å‚¬çœ ");
 	connect(_actionSleepOrWake, &QAction::triggered, this, &Live2DWidget::_OnActionSleepOrWake);
 	_actionMenu->addAction(_actionSleepOrWake);
 
 	_actionChangeItem = new QAction(this);
-	_actionChangeItem->setText("¸ü»»ÎïÆ·");
+	_actionChangeItem->setText("æ›´æ¢ç‰©å“");
 	connect(_actionChangeItem, &QAction::triggered, this, &Live2DWidget::_OnActionChangeItem);
 	_actionMenu->addAction(_actionChangeItem);
 
 	_actionClearItem = new QAction(this);
-	_actionClearItem->setText("Çå¿ÕÎïÆ·");
+	_actionClearItem->setText("æ¸…ç©ºç‰©å“");
 	connect(_actionClearItem, &QAction::triggered, _itemManager, &ItemManager::Clear);
 	_actionMenu->addAction(_actionClearItem);
 
@@ -128,41 +127,34 @@ Live2DWidget::Live2DWidget(std::string modelName)
 
 	_menu->addSeparator();
 
-	_actionOpenThLauncher = new QAction(this);
-	_actionOpenThLauncher->setText("¶«·½Æô¶¯Æ÷...");
-	connect(_actionOpenThLauncher, &QAction::triggered, this, &Live2DWidget::_OnActionOpenThLauncher);
-	_menu->addAction(_actionOpenThLauncher);
-
-	_menu->addSeparator();
-
 	_actionOpenSettingsMenu = new QAction(this);
-	_actionOpenSettingsMenu->setText("ÉèÖÃ...");
+	_actionOpenSettingsMenu->setText("è®¾ç½®...");
 	connect(_actionOpenSettingsMenu, &QAction::triggered, this, &Live2DWidget::_OnActionOpenSettingsMenu);
 	_menu->addAction(_actionOpenSettingsMenu);
 
 	_actionOpenAboutsDialog = new QAction(this);
-	_actionOpenAboutsDialog->setText("¹ØÓÚ...");
+	_actionOpenAboutsDialog->setText("å…³äº...");
 	connect(_actionOpenAboutsDialog, &QAction::triggered, this, &Live2DWidget::_OnActionOpenAboutsDialog);
 	_menu->addAction(_actionOpenAboutsDialog);
 
 	_menu->addSeparator();
 
 	_actionClose = new QAction(this);
-	_actionClose->setText("ÍË³ö");
+	_actionClose->setText("é€€å‡º");
 	connect(_actionClose, &QAction::triggered, this, &Live2DWidget::_OnActionClose);
 	_menu->addAction(_actionClose);
 
 	_menu->show();
 	_menu->hide();
 
-	//³õÊ¼»¯ OpenGL (³õÊ¼»¯Ç°±ØĞëÏÈshow³ö´°¿Ú£©
+	//åˆå§‹åŒ– OpenGL (åˆå§‹åŒ–å‰å¿…é¡»å…ˆshowå‡ºçª—å£ï¼‰
 	this->makeCurrent();
 	GLFuncs()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	GLFuncs()->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	GLFuncs()->glEnable(GL_BLEND);
 	GLFuncs()->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//³õÊ¼»¯ cubism
+	//åˆå§‹åŒ– cubism
 	_cubismAllocator = new Allocator();
 	_cubismOption = new Csm::CubismFramework::Option();
 	_cubismOption->LogFunction = CubismLogFuncion;
@@ -170,13 +162,13 @@ Live2DWidget::Live2DWidget(std::string modelName)
 	Csm::CubismFramework::StartUp(_cubismAllocator, _cubismOption);
 	Csm::CubismFramework::Initialize();
 
-	//³õÊ¼»¯ Ä£ĞÍ
+	//åˆå§‹åŒ– æ¨¡å‹
 	_LoadModel(modelName);
 	_SetupModelSize();
 
 	_ChangeItem(_GetRandomItem(), false);
 
-	//³õÊ¼»¯ÆäËû
+	//åˆå§‹åŒ–å…¶ä»–
 	_SetupHotkeys();
 
 	if (Settings::firstTimeStart)
@@ -190,11 +182,6 @@ Live2DWidget::Live2DWidget(std::string modelName)
 
 Live2DWidget::~Live2DWidget()
 {
-	if (_thLauncher)
-	{
-		_thLauncher->close();
-	}
-
 	_mouseTracker->deleteLater();
 	_screenGrabber->deleteLater();
 	_itemManager->deleteLater();
@@ -291,7 +278,6 @@ void Live2DWidget::mouseDoubleClickEvent(QMouseEvent* e)
 {
 	if (e->button() == Qt::LeftButton && !_ModelHitTest(_mouseX, _mouseY, "Item"))
 	{
-		_OnActionOpenThLauncher();
 		_lBtnDoubleClicked = true;
 	}
 }
@@ -307,8 +293,8 @@ void Live2DWidget::contextMenuEvent(QContextMenuEvent* e)
 {
 	_menu->move(e->globalX(), e->globalY());
 
-	_actionSitOrFloat->setText(_isFloating ? "×øÏÂ" : "ÆğÉí");
-	_actionSleepOrWake->setText(_isSleeping ? "»½ĞÑ" : "´ßÃß");
+	_actionSitOrFloat->setText(_isFloating ? "åä¸‹" : "èµ·èº«");
+	_actionSleepOrWake->setText(_isSleeping ? "å”¤é†’" : "å‚¬çœ ");
 
 	_menu->show();
 }
@@ -319,29 +305,29 @@ void Live2DWidget::_Update()
 {
 	if (_model)
 	{
-		//¿ªÊ¼¸üĞÂ£ºÊó±ê×´Ì¬
+		//å¼€å§‹æ›´æ–°ï¼šé¼ æ ‡çŠ¶æ€
 		double mouseDist = Def::Distance(_modelX, _modelY, _mouseX, _mouseY);
 		if (_mouseX != _lastFrameMouseX || _mouseY != _lastFrameMouseY || _lBtnPressed || _rBtnPressed)
 		{
-			//¸üĞÂÊó±ê¾²Ö¹×´Ì¬£¬Êó±êÎ»ÒÆ¡¢µã»÷¶¼¿ÉÒÔÊ¹Êó±ê²»¾²Ö¹
+			//æ›´æ–°é¼ æ ‡é™æ­¢çŠ¶æ€ï¼Œé¼ æ ‡ä½ç§»ã€ç‚¹å‡»éƒ½å¯ä»¥ä½¿é¼ æ ‡ä¸é™æ­¢
 			_mouseStillStartTime = _time;
 		}
 		_lastFrameMouseX = _mouseX;
 		_lastFrameMouseY = _mouseY;
 
-		//¿ªÊ¼¸üĞÂ£ºlive2dÄ£ĞÍµÄ²ÎÊıÊı¾İ
+		//å¼€å§‹æ›´æ–°ï¼šlive2dæ¨¡å‹çš„å‚æ•°æ•°æ®
 		{
 
-			//Ä£ĞÍÖĞµÀ¾ßÎ»ÖÃ£¨¹©µÀ¾ß¹ÜÀíÆ÷Ê¹ÓÃ£©
+			//æ¨¡å‹ä¸­é“å…·ä½ç½®ï¼ˆä¾›é“å…·ç®¡ç†å™¨ä½¿ç”¨ï¼‰
 			{
 				_itemX = _modelX - _modelSize * 0.015;
 				_itemY = _modelY + _modelSize * 0.1;
 				_itemSize = 0.07 * _modelSize;
 			}
 
-			//×øÏÂºÍÆğÉí
+			//åä¸‹å’Œèµ·èº«
 			{
-				//ÍÏ¶¯Ê±±£³Ö¸¡¶¯
+				//æ‹–åŠ¨æ—¶ä¿æŒæµ®åŠ¨
 				if (_isDragging)
 				{
 					_Float();
@@ -357,7 +343,7 @@ void Live2DWidget::_Update()
 				}
 			}
 
-			//ÉÁ¹âµÆ
+			//é—ªå…‰ç¯
 			{
 				if (_isCameraFlashing)
 				{
@@ -366,7 +352,7 @@ void Live2DWidget::_Update()
 				}
 			}
 
-			//ÔË¶¯¹ßĞÔ
+			//è¿åŠ¨æƒ¯æ€§
 			{
 				double velocityX = (double)_modelX - _modelXLastFrame;
 				double velocityY = (double)_modelY - _modelYLastFrame;
@@ -376,12 +362,12 @@ void Live2DWidget::_Update()
 				_model->SetParamValue("VECLOCITY_Y", -velocityY * Def::dragInertia);
 			}
 
-			//Ë¯Ãß
+			//ç¡çœ 
 			{
-				//´¥·¢Ë¯¾õ
+				//è§¦å‘ç¡è§‰
 				if (Settings::sleep && !_isSleeping)
 				{
-					//´¥·¢Ìõ¼ş£ºÊó±êÔ¶Àë »ò Êó±ê³¤Ê±¼ä²»¶¯
+					//è§¦å‘æ¡ä»¶ï¼šé¼ æ ‡è¿œç¦» æˆ– é¼ æ ‡é•¿æ—¶é—´ä¸åŠ¨
 					if (mouseDist > Def::sleepTriggerDist || _time - _mouseStillStartTime > Def::mouseStillTriggerSleepTime)
 					{
 						if (_time - _lastTriggeredSleepTime > Def::sleepTriggerInterval)
@@ -390,40 +376,40 @@ void Live2DWidget::_Update()
 							_lastTriggeredSleepTime = _time;
 						}
 					}
-					//Á½Ìõ¼ş¾ù²»Âú×ãÊ±ÖØÖÃ´¥·¢cd£¨ÏÂ´Î¿ªÊ¼Âú×ãÊ±²Å¿ªÊ¼ÀäÈ´)
+					//ä¸¤æ¡ä»¶å‡ä¸æ»¡è¶³æ—¶é‡ç½®è§¦å‘cdï¼ˆä¸‹æ¬¡å¼€å§‹æ»¡è¶³æ—¶æ‰å¼€å§‹å†·å´)
 					else if (mouseDist <= Def::sleepTriggerDist && _time == _mouseStillStartTime)
 					{
 						_lastTriggeredSleepTime = _time;
 					}
 				}
 
-				//Ë¯¾õÊ±µÄÏÂÂä
+				//ç¡è§‰æ—¶çš„ä¸‹è½
 				if (Settings::fallWhenSleep && _isSleeping && _isFloating)
 				{
 					this->_MoveModelBy(0, Def::sleepFallingSpeed / 600.0 * double(Settings::size) * _frameTime * 0.001);
-					//´¥µ××øÏÂ
+					//è§¦åº•åä¸‹
 					if (_modelY >= _screenHeight - _modelYMax)
 						_Sit();
 				}
 			}
 
-			//Î¢Ğ¦
+			//å¾®ç¬‘
 			{
-				//Êó±ê½ü¾àÀëÒÆ¶¯´¥·¢Î¢Ğ¦
+				//é¼ æ ‡è¿‘è·ç¦»ç§»åŠ¨è§¦å‘å¾®ç¬‘
 				if (!_isDragging && !_isSleeping && _mouseStillStartTime == _time && mouseDist <= Def::smileTriggerDist)
 				{
 					if (_time - _lastTriggeredSmileTime > Def::smileTriggerInterval)
 					{
 						_lastTriggeredSmileTime = _time;
-						//Ëæ»úÑ¡ÔñÃĞÑÛ»ò²»ÃĞÑÛ
-						_StartSmile(qrand() & 1);
+						//éšæœºé€‰æ‹©çœ¯çœ¼æˆ–ä¸çœ¯çœ¼
+						_StartSmile(QRandomGenerator::global()->bounded(2));
 					}
 				}
 			}
 
-			//¸üĞÂ±íÇé£¨°üÀ¨Ë¯Ãß¡¢Î¢Ğ¦)
+			//æ›´æ–°è¡¨æƒ…ï¼ˆåŒ…æ‹¬ç¡çœ ã€å¾®ç¬‘)
 			{
-				//¸üĞÂÑÛ¾¦ºÍ×ì°Í²ÎÊı
+				//æ›´æ–°çœ¼ç›å’Œå˜´å·´å‚æ•°
 				if (!_isSmiling)
 				{
 					if (!_isSleeping)
@@ -456,12 +442,12 @@ void Live2DWidget::_Update()
 				_model->SetParamValue("MOUTH_OPEN_CLOSE", _mouthState);
 			}
 
-			//ÊÓÏß×·×Ù
+			//è§†çº¿è¿½è¸ª
 			{
-				//ËÕĞÑÇÒÕöÑÛÊ±½øĞĞ×·×Ù
+				//è‹é†’ä¸”ççœ¼æ—¶è¿›è¡Œè¿½è¸ª
 				if (!_isSleeping && !(_isSmiling && _isEyeSquinting))
 				{
-					//Êó±êÔ¶Àë´¥·¢¿´ÏòÆÁÄ»Íâ
+					//é¼ æ ‡è¿œç¦»è§¦å‘çœ‹å‘å±å¹•å¤–
 					if (mouseDist > Def::lookAtOuterTriggerDist)
 					{
 						if (_time - _lastTriggeredLookAtOuterTime > Def::lookAtOuterInterval)
@@ -475,23 +461,23 @@ void Live2DWidget::_Update()
 						_lastTriggeredLookAtOuterTime = _time;
 					}
 
-					//¸üĞÂ¿´ÏòµÄÎ»ÖÃ
+					//æ›´æ–°çœ‹å‘çš„ä½ç½®
 					if (_isLookingAtOuter)
 					{
-						//¿´ÏòÆÁÄ»Íâ£¨Ä£ĞÍÖĞĞÄ)
+						//çœ‹å‘å±å¹•å¤–ï¼ˆæ¨¡å‹ä¸­å¿ƒ)
 						_lookAtX = Def::Lerp(_lookAtX, _modelX, _frameTime * Def::sightTrackingSpeed);
 						_lookAtY = Def::Lerp(_lookAtY, _modelY, _frameTime * Def::sightTrackingSpeed);
 					}
 					else
 					{
-						//¸ú×ÙÊó±ê
+						//è·Ÿè¸ªé¼ æ ‡
 						_lookAtX = Def::Lerp(_lookAtX, _mouseX, _frameTime * Def::sightTrackingSpeed);
 						_lookAtY = Def::Lerp(_lookAtY, _mouseY, _frameTime * Def::sightTrackingSpeed);
 					}
 				}
 				else if (_isSleeping)
 				{
-					//Ë¯¾õÊ±µÄµÍÍ·
+					//ç¡è§‰æ—¶çš„ä½å¤´
 					double distX = abs(_lookAtX - _modelX);
 					_lookAtY = Def::Lerp(_lookAtY, _modelY + distX * 2, _frameTime * Def::sightTrackingSpeed * 0.1);
 				}
@@ -499,12 +485,12 @@ void Live2DWidget::_Update()
 				double dx = _lookAtX - _modelX;
 				double dy = _modelY - _lookAtY;
 
-				//¸üĞÂÍ·ÇãĞ±½Ç¶È
+				//æ›´æ–°å¤´å€¾æ–œè§’åº¦
 				{
 					double lookAtAngle = 0.0;
 					if (abs(dx) < 0.0001)
 					{
-						//·ÀÖ¹³ı0Òì³£
+						//é˜²æ­¢é™¤0å¼‚å¸¸
 						lookAtAngle = dy > 0 ? 90.0 : -90.0;
 					}
 					else
@@ -512,7 +498,7 @@ void Live2DWidget::_Update()
 						lookAtAngle = std::atan(-dy / double(dx)) / Def::pi * 180.0;
 					}
 
-					//´Ó0¡ãµ½headLeanAngleMaxPointÔÙµ½90¡ã ÇãĞ±½Ç¶ÈÏÈÔöºó¼õ
+					//ä»0Â°åˆ°headLeanAngleMaxPointå†åˆ°90Â° å€¾æ–œè§’åº¦å…ˆå¢åå‡
 					double leanRate = 0.0;
 					if (abs(lookAtAngle) <= Def::headLeanAngleMaxPoint)
 					{
@@ -532,9 +518,9 @@ void Live2DWidget::_Update()
 					_model->SetParamValue("HEAD_Z", _headLeanAngle * 3.0);
 				}
 
-				//Í·ºÍÑÛ¾¦¸ú×Ù
+				//å¤´å’Œçœ¼ç›è·Ÿè¸ª
 				{
-					//Ç°ºó·½×·×Ù·¶Î§²»Í¬
+					//å‰åæ–¹è¿½è¸ªèŒƒå›´ä¸åŒ
 					if (dx < 0)
 					{
 						dx = dx / (double)Def::sightTrackingRangeHorizotalForward * 30.0;
@@ -552,7 +538,7 @@ void Live2DWidget::_Update()
 				}
 			}
 
-			//³á°òÉÈ¶¯
+			//ç¿…è†€æ‰‡åŠ¨
 			{
 				if (_isFloating)
 				{
@@ -566,9 +552,9 @@ void Live2DWidget::_Update()
 				}
 			}
 
-			//Õ£ÑÛ
+			//çœ¨çœ¼
 			{
-				//¿ªÊ¼Õ£ÑÛ
+				//å¼€å§‹çœ¨çœ¼
 				if (!_isSleeping && !(_isSmiling && _isEyeSquinting))
 				{
 					if (_time - _lastTriggeredEyeBlinkTime > Def::eyeBlinkInterval)
@@ -582,7 +568,7 @@ void Live2DWidget::_Update()
 					_lastTriggeredEyeBlinkTime = _time;
 				}
 
-				//¸üĞÂÕ£ÑÛÑÛ¾¦²ÎÊı£¨»á¸²¸ÇÖ®Ç°µÄ±íÇéÑÛ¾¦²ÎÊı)
+				//æ›´æ–°çœ¨çœ¼çœ¼ç›å‚æ•°ï¼ˆä¼šè¦†ç›–ä¹‹å‰çš„è¡¨æƒ…çœ¼ç›å‚æ•°)
 				if (_isEyeBlinking)
 				{
 					double ratio = 1.0 - abs(cos(double(_time - _eyeBlinkStartTime) / Def::eyeBlinkTime * Def::pi));
@@ -592,7 +578,7 @@ void Live2DWidget::_Update()
 				}
 			}
 
-			//Æ¯¸¡
+			//æ¼‚æµ®
 			{
 				if (_isFloating && !_isDragging)
 				{
@@ -604,7 +590,7 @@ void Live2DWidget::_Update()
 				}
 			}
 
-			//ºôÎü
+			//å‘¼å¸
 			{
 				_model->SetParamValue("BREATH", sin(_time / double(Def::breathTime) * 2.0 * Def::pi) * 15.0 + 15.0);
 			}
@@ -651,7 +637,7 @@ bool Live2DWidget::_ModelHitTest(int x, int y, std::string hitArea) const
 		return false;
 	}
 
-	//»ñµÃÄ£ĞÍÔÚopenglÖĞµÄ×ø±ê(-1.0~1.0)
+	//è·å¾—æ¨¡å‹åœ¨openglä¸­çš„åæ ‡(-1.0~1.0)
 	double modelX = (x - _modelX) / _modelSize * 2.0;
 	double modelY = (_modelY - y) / _modelSize * 2.0;
 	if (modelX < -1.0 || modelY < -1.0 || modelX > 1.0 || modelY > 1.0)
@@ -719,19 +705,19 @@ void Live2DWidget::_KeepModelInScreen()
 
 void Live2DWidget::_UpdateSettings()
 {
-	//¸üĞÂË¢ĞÂÂÊ
+	//æ›´æ–°åˆ·æ–°ç‡
 	_timer->stop();
 	_frameTime = 1000 / Settings::mainFps;
 	_timer->start(_frameTime);
 
 	_itemManager->UpdateSettings();
 
-	//¸üĞÂ»î¶¯·¶Î§
+	//æ›´æ–°æ´»åŠ¨èŒƒå›´
 	TransparentWindow::Setup(this, Settings::expandToStateBar);
 	_screenHeight = this->height();
 	_screenWidth = this->width();
 
-	//¸üĞÂÄ£ĞÍ³ß´ç
+	//æ›´æ–°æ¨¡å‹å°ºå¯¸
 	int lastSize = _modelSize;
 	_modelSize = Settings::size;
 	_modelXMax *= _modelSize / lastSize;
@@ -739,7 +725,7 @@ void Live2DWidget::_UpdateSettings()
 	_modelXMin *= _modelSize / lastSize;
 	_modelYMin *= _modelSize / lastSize;
 
-	//¸üĞÂ¿ì½İ¼ü
+	//æ›´æ–°å¿«æ·é”®
 	_SetupHotkeys();
 }
 
@@ -773,9 +759,6 @@ void Live2DWidget::_SetupHotkeys()
 
 	_hotkeys.push_back(new QHotkey(Settings::openScreenshotHotkey, true, this));
 	connect(_hotkeys.back(), &QHotkey::activated, this, &Live2DWidget::_OnActionOpenScreenshotFolder);
-
-	_hotkeys.push_back(new QHotkey(Settings::thLauncherHotkey, true, this));
-	connect(_hotkeys.back(), &QHotkey::activated, this, &Live2DWidget::_OnActionOpenThLauncher);
 }
 
 void Live2DWidget::_SetHotkeysState(bool enable)
@@ -849,10 +832,10 @@ int Live2DWidget::_GetRandomItem() const
 {
 	int i = 0;
 	if (_item == ITEM_CAMERA)
-		i = (qrand() % (ITEMTYPE_COUNT - 1)) + 1;
+		i = QRandomGenerator::global()->bounded(1, ITEMTYPE_COUNT);
 	else
 	{
-		i = (qrand() % (ITEMTYPE_COUNT - 2)) + 1;
+		i = QRandomGenerator::global()->bounded(1, ITEMTYPE_COUNT - 1);
 		if (_item <= i)
 			i++;
 	}
@@ -870,8 +853,8 @@ void Live2DWidget::_Sleep()
 	_EndEyeBlink();
 
 	_isSleeping = true;
-	//ÉèÖÃĞÑÀ´µÄÊ±¼ä
-	_AddPlan(&Live2DWidget::_Wake, qrand() % (Def::sleepTimeMax - Def::sleepTimeMin) + Def::sleepTimeMin);
+	//è®¾ç½®é†’æ¥çš„æ—¶é—´
+	_AddPlan(&Live2DWidget::_Wake, QRandomGenerator::global()->bounded(Def::sleepTimeMin, Def::sleepTimeMax));
 }
 
 void Live2DWidget::_Sit()
@@ -897,7 +880,7 @@ void Live2DWidget::_StartSmile(bool withEyeSquinted)
 		_EndEyeBlink();
 	}
 	_isSmiling = true;
-	//ÉèÖÃ½áÊøÎ¢Ğ¦Ê±¼ä
+	//è®¾ç½®ç»“æŸå¾®ç¬‘æ—¶é—´
 	_AddPlan(&Live2DWidget::_EndSmile, withEyeSquinted ? Def::bigSmileTime : Def::smileTime);
 }
 
@@ -974,7 +957,7 @@ void Live2DWidget::_Show()
 
 void Live2DWidget::_OnScreenshotGrabbed()
 {
-	//Èç¹ûÎ´ÔÚ½ØÍ¼Ê±Òş²Ø£¬ÄÇ¾ÍÔÚ´ËÊ±£¨¿ªÊ¼±à¼­£©Òş²Ø
+	//å¦‚æœæœªåœ¨æˆªå›¾æ—¶éšè—ï¼Œé‚£å°±åœ¨æ­¤æ—¶ï¼ˆå¼€å§‹ç¼–è¾‘ï¼‰éšè—
 	if (!Settings::hideWhenScreenshot)
 	{
 		_StartCameraFlash();
@@ -990,7 +973,7 @@ void Live2DWidget::_OnScreenshotEditStarted()
 
 void Live2DWidget::_OnScreenshotEditEnded(bool accept)
 {
-	//Èç¹ûÖ®Ç°ÓÃ¿ì½İ¼üÒş²Ø£¬ÄÇ¾Í±£³ÖÒş²Ø
+	//å¦‚æœä¹‹å‰ç”¨å¿«æ·é”®éšè—ï¼Œé‚£å°±ä¿æŒéšè—
 	if (!_isHidingByHotkey)
 	{
 		_Show();
@@ -1002,14 +985,6 @@ void Live2DWidget::_OnScreenshotEditEnded(bool accept)
 		_StartCameraFlash();
 	}
 }
-
-void Live2DWidget::_OnThLauncherLaunched()
-{
-	_thLauncher->deleteLater();
-	_thLauncher = nullptr;
-}
-
-
 
 void Live2DWidget::_OnActionClose()
 {
@@ -1105,7 +1080,7 @@ void Live2DWidget::_OnActionHideOrShow()
 
 void Live2DWidget::_OnActionOpenAboutsDialog()
 {
-	//ÖğĞĞ¶ÁÈëreadme
+	//é€è¡Œè¯»å…¥readme
 	std::string text, tmp;
 	std::ifstream in("../readme.txt");
 	while (in)
@@ -1123,7 +1098,7 @@ void Live2DWidget::_OnActionOpenAboutsDialog()
 
 	QMessageBox* box = new QMessageBox;
 	box->setContentsMargins(5, 5, 5, 5);
-	box->setWindowTitle("DeskFairy->¹ØÓÚ");
+	box->setWindowTitle("DeskFairy->å…³äº");
 	box->setAttribute(Qt::WA_DeleteOnClose);
 	box->setText(text.c_str());
 	box->exec();
@@ -1147,17 +1122,6 @@ void Live2DWidget::_OnActionChangeItem()
 {
 	_ChangeItem(_GetRandomItem(), Settings::allowItemSpawn);
 }
-
-void Live2DWidget::_OnActionOpenThLauncher()
-{
-	if (!_thLauncher)
-	{
-		_thLauncher = new ThLauncher;
-		connect(_thLauncher, &ThLauncher::LaunchedSignal, this, &Live2DWidget::_OnThLauncherLaunched);
-	}
-}
-
-
 
 void Live2DWidget::_AddPlan(PlanFunction func, int delay)
 {

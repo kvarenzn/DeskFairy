@@ -58,5 +58,5 @@ private:
     Csm::csmVector<Csm::csmRectF> _hitArea;
     Csm::csmVector<Csm::csmRectF> _userArea;
 
-    Csm::Rendering::CubismOffscreenFrame_OpenGLES2  _renderBuffer;   ///< ¥Õ¥ì©`¥à¥Ð¥Ã¥Õ¥¡ÒÔÍâ¤ÎÃè»­ÏÈ
+    Csm::Rendering::CubismOffscreenFrame_OpenGLES2  _renderBuffer;   ///< ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ä»¥å¤–ã®æç”»å…ˆ
 };

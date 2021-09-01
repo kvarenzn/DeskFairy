@@ -1,12 +1,12 @@
 #include "TransparentWindow.h"
 #include <QCoreApplication>
 #include <QScreen>
-#include <QDesktopWidget>
 #include <QtWidgets/QApplication>
 
-#ifdef WIN32
-#include <Windows.h>
-#endif	// WIN32
+#ifdef Q_OS_LINUX
+#include <X11/extensions/shape.h>
+#include <QX11Info>
+#endif
 
 void TransparentWindow::Setup(QWidget* w, bool expandToStateBar)
 {
@@ -17,46 +17,29 @@ void TransparentWindow::Setup(QWidget* w, bool expandToStateBar)
     w->setAttribute(Qt::WA_TranslucentBackground);
     QSize screenSize;
     if (!expandToStateBar)
-        screenSize = QApplication::desktop()->availableGeometry().size();
+        screenSize = QApplication::primaryScreen()->availableGeometry().size();
     else
-        screenSize = QApplication::desktop()->size();
+        screenSize = QApplication::primaryScreen()->size();
     w->setGeometry(0, 0, screenSize.width(), screenSize.height());
     TransparentWindow::SetTransparentForMouse(w, true);
 }
 
 void TransparentWindow::SetTransparentForMouse(QWidget* w, bool flag)
 {
-
-#ifdef WIN32
-    HWND hWnd = (HWND)(w->winId());
-    if (flag)
-        SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE);
-    else
-        SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) & (~WS_EX_TRANSPARENT));
-#endif	// WIN32
-
+#ifdef Q_OS_LINUX
+    if (flag) {
+        XShapeCombineRectangles(QX11Info::display(), w->winId(), ShapeInput, 0, 0, nullptr, 0, ShapeSet, YXBanded);
+    } else {
+        auto window = w->window();
+        XRectangle rect = {
+            0, 0, static_cast<unsigned short>(window->width()), static_cast<unsigned short>(window->height())
+        } ;
+        XShapeCombineRectangles(QX11Info::display(), w->winId(), ShapeInput, 0, 0, &rect, 1, ShapeSet, YXBanded);
+    }
+#endif
 }
 
 bool TransparentWindow::processNativeEvent(QWidget* w, const QByteArray& b, void* m, long* r)
 {
-
-#ifdef WIN32
-    MSG* msg = reinterpret_cast<MSG*>(m);
-    if (msg->message == WM_MOUSEACTIVATE)
-    {
-        *r = MA_NOACTIVATE;
-        return true;
-    }
-    if (msg->message == WM_ACTIVATE)
-    {
-        if (LOWORD(msg->wParam))
-        {
-            w->clearFocus();
-            *r = 1;
-            return true;
-        }
-    }
-#endif // WIN32
-
     return false;
 }

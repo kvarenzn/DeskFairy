@@ -2,6 +2,8 @@
 #include <fstream>
 #include "Logger.h"
 
+#include <sys/stat.h>
+
 using namespace std;
 
 Bytes* FileLoader::Load(const std::string filePath, unsigned int* outSize)
