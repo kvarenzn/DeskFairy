@@ -132,11 +132,6 @@ Live2DWidget::Live2DWidget(std::string modelName)
 	connect(_actionOpenSettingsMenu, &QAction::triggered, this, &Live2DWidget::_OnActionOpenSettingsMenu);
 	_menu->addAction(_actionOpenSettingsMenu);
 
-	_actionOpenAboutsDialog = new QAction(this);
-	_actionOpenAboutsDialog->setText("关于...");
-	connect(_actionOpenAboutsDialog, &QAction::triggered, this, &Live2DWidget::_OnActionOpenAboutsDialog);
-	_menu->addAction(_actionOpenAboutsDialog);
-
 	_menu->addSeparator();
 
 	_actionClose = new QAction(this);
@@ -173,7 +168,6 @@ Live2DWidget::Live2DWidget(std::string modelName)
 
 	if (Settings::firstTimeStart)
 	{
-		_OnActionOpenAboutsDialog();
 		Settings::Save();
 	}
 
@@ -1076,34 +1070,6 @@ void Live2DWidget::_OnActionHideOrShow()
 		_Show();
 		_isHidingByHotkey = false;
 	}
-}
-
-void Live2DWidget::_OnActionOpenAboutsDialog()
-{
-	//逐行读入readme
-	std::string text, tmp;
-	std::ifstream in("../readme.txt");
-	while (in)
-	{
-		std::getline(in, tmp);
-		text += tmp + "\n";
-	}
-
-	if (text.empty())
-	{
-		return;
-	}
-
-	_Hide(true);
-
-	QMessageBox* box = new QMessageBox;
-	box->setContentsMargins(5, 5, 5, 5);
-	box->setWindowTitle("DeskFairy->关于");
-	box->setAttribute(Qt::WA_DeleteOnClose);
-	box->setText(text.c_str());
-	box->exec();
-
-	_Show();
 }
 
 void Live2DWidget::_OnActionSleepOrWake()

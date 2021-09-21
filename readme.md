@@ -3,6 +3,7 @@
 A desktop pet based on Qt & Live2D
 
 Supporting platform: Linux x64
+
 Tested on `archlinux rolling x64`
 
 ## Requirements

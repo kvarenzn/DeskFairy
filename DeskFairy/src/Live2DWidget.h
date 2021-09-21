@@ -366,12 +366,6 @@ private:
     //菜单:显示或隐藏动作
     void _OnActionHideOrShow();
 
-    //菜单:打开关于界面动作
-    void _OnActionOpenAboutsDialog();
-
     //菜单:切换物品动作
     void _OnActionChangeItem();
-
-    //菜单:打开东方启动器
-    void _OnActionOpenThLauncher();
 };
