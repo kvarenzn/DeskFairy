@@ -10,7 +10,7 @@ download_resources() {
 	mkdir downloads
 	cd downloads
 	wget $DESKFAIRY_RELEASE_URL -O $DESKFAIRY_RELEASE_RAR
-	unar $DESKFAIRY_RELEASE_RAR
+	unrar x $DESKFAIRY_RELEASE_RAR
 	mv $DESKFAIRY_RELEASE_DIR/resources ../release/
 	cd ..
 	rm -rf downloads

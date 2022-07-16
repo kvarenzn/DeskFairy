@@ -1,6 +1,3 @@
-#pragma once
-#pragma execution_character_set("utf-8")
-
 #include <CubismFramework.hpp>
 
 #include <QOpenGLWidget>
@@ -22,7 +19,6 @@ class MouseTracker;
 class ItemManager;
 class Model;
 class ThLauncher;
-
 
 
 //掌管Live2D模型、窗口、其他模块的更新
